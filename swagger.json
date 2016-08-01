@@ -1,0 +1,108 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Automation S3 & Failures API",
+    "version": "1.0.0",
+    "title": "Doppio Screenshots and Errors evidence",
+    "contact": {
+      "email": "brokkr@auth0.com"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "host": "https://webtask.it.auth0.com/api/run/wt-iesmite-gmail_com-0/doppio-scan",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/getFiles": {
+      "get": {
+        "summary": "Get Files and send to slack by path and channel",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "description": "Path to search files",
+            "required": true
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "Channel to post results in slack",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/file": {
+      "get": {
+        "summary": "Get a file by path",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "description": "Key of file to search",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/listByPath": {
+      "get": {
+        "summary": "List all files by path",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "description": "Path to search files",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/deleteByKey": {
+      "get": {
+        "summary": "Remove file by key",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "query",
+            "description": "Key of file to delete",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      }
+    } 
+  }
+}
