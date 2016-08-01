@@ -16,7 +16,7 @@ app.use(json());
 
 
 // GET
-app.get('/getFiles', (req, res) => {
+app.get('/s3/sendToSlack', (req, res) => {
   AWS.config.update({accessKeyId: req.webtaskContext.secrets.AWS_ACCESS_KEY_ID, secretAccessKey:req.webtaskContext.secrets.AWS_SECRET_ACCESS_KEY});
   let s3 = new AWS.S3();
   const path = req.query.path || 'functional-tests/4979';
@@ -41,7 +41,7 @@ app.get('/getFiles', (req, res) => {
         const fnameUrl = fname.replace('+', '%2b');
         attachments.push({
             "title": fname.replace(path + '/', ''),
-            "title_link": `https://webtask.it.auth0.com/api/run/${req.x_wt.container}/${req.x_wt.jtn}/file?path=${fnameUrl}`,
+            "title_link": `https://webtask.it.auth0.com/api/run/${req.x_wt.container}/${req.x_wt.jtn}/s3/getFile?path=${fnameUrl}`,
             "mrkdwn_in": ["text"],
             "color": "#e60b25",
         });
@@ -67,7 +67,7 @@ app.get('/getFiles', (req, res) => {
 });
 
 
-app.get('/file', (req, res) => {
+app.get('/s3/getFile', (req, res) => {
   const path = req.query.path;
   AWS.config.update({accessKeyId: req.webtaskContext.secrets.AWS_ACCESS_KEY_ID, secretAccessKey:req.webtaskContext.secrets.AWS_SECRET_ACCESS_KEY});
   let s3 = new AWS.S3();
@@ -83,7 +83,7 @@ app.get('/file', (req, res) => {
   
 });
 
-app.get('/listByPath', (req, res) => {
+app.get('/s3/listFilesByPath', (req, res) => {
   AWS.config.update({accessKeyId: req.webtaskContext.secrets.AWS_ACCESS_KEY_ID, secretAccessKey:req.webtaskContext.secrets.AWS_SECRET_ACCESS_KEY});
   let s3 = new AWS.S3();
   const path = req.query.path || 'functional-tests/4979';
@@ -103,7 +103,7 @@ app.get('/listByPath', (req, res) => {
         let key  = obj.Key.replace('+', '%2b');
         results.push({
           'key': obj.Key,
-          'delete': `https://webtask.it.auth0.com/api/run/${req.x_wt.container}/${req.x_wt.jtn}/deleteByKey?key=${obj.Key}`
+          'delete': `https://webtask.it.auth0.com/api/run/${req.x_wt.container}/${req.x_wt.jtn}/s3/deleteFileByKey?key=${obj.Key}`
         });
       });
       res.json(results);
@@ -113,7 +113,7 @@ app.get('/listByPath', (req, res) => {
 
 //Yes yes I know is not the right way is a get to a delete :)
 
-app.get('/deleteByKey', (req, res) => {
+app.get('/s3/deleteFileByKey', (req, res) => {
   AWS.config.update({accessKeyId: req.webtaskContext.secrets.AWS_ACCESS_KEY_ID, secretAccessKey:req.webtaskContext.secrets.AWS_SECRET_ACCESS_KEY});
   let s3 = new AWS.S3();
   const key = req.query.key;

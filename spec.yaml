@@ -12,7 +12,7 @@ basePath: /api/run/wt-iesmite-gmail_com-0/doppio-scan
 schemes:
   - https
 paths:
-  /getFiles:
+  /s3/sendToSlack:
     get:
       description: Get Files and send to slack by path and channel
       produces:
@@ -31,7 +31,7 @@ paths:
       responses:
         '200':
           description: successful operation
-  /file:
+  /s3/getFile:
     get:
       description: Get a file by path
       parameters:
@@ -43,7 +43,7 @@ paths:
       responses:
         '200':
           description: successful operation
-  /listByPath:
+  /s3/listFilesByPath:
     get:
       description: List all files by path
       produces:
@@ -57,7 +57,7 @@ paths:
       responses:
         '200':
           description: successful operation
-  /deleteByKey:
+  /s3/deleteFileByKey:
     get:
       description: Remove file by key
       produces:
