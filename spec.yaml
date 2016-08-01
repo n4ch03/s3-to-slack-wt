@@ -1,0 +1,73 @@
+swagger: '2.0'
+info:
+  description: Automation S3 & Failures API
+  version: 1.0.0
+  title: Doppio Screenshots and Errors evidence
+  contact:
+    email: brokkr@auth0.com
+  license:
+    name: MIT
+host: webtask.it.auth0.com
+basePath: /api/run/wt-iesmite-gmail_com-0/doppio-scan
+schemes:
+  - https
+paths:
+  /getFiles:
+    get:
+      description: Get Files and send to slack by path and channel
+      produces:
+        - application/json
+      parameters:
+        - name: path
+          in: query
+          description: Path to search files
+          required: true
+          type: string
+        - name: channel
+          in: query
+          description: Channel to post results in slack
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+  /file:
+    get:
+      description: Get a file by path
+      parameters:
+        - name: path
+          in: query
+          description: Key of file to search
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+  /listByPath:
+    get:
+      description: List all files by path
+      produces:
+        - application/json
+      parameters:
+        - name: path
+          in: query
+          description: Path to search files
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+  /deleteByKey:
+    get:
+      description: Remove file by key
+      produces:
+        - application/json
+      parameters:
+        - name: key
+          in: query
+          description: Key of file to delete
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
