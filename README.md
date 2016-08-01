@@ -1,1 +1,0 @@
-# s3-to-slack-wt
