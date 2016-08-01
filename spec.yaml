@@ -1,10 +1,10 @@
 swagger: '2.0'
 info:
-  description: Automation S3 & Failures API
+  description: Automation S3 And Failures API
   version: 1.0.0
-  title: Doppio Screenshots and Errors evidence
+  title: Automation S3 And Failures API
   contact:
-    email: brokkr@auth0.com
+    email: iesmite@gmail.com
   license:
     name: MIT
 host: webtask.it.auth0.com
