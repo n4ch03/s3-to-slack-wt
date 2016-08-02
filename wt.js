@@ -15,10 +15,22 @@ let app = Express();
 app.use(json());
 
 
+app.use((req, res, next) => {
+  AWS.config.update({accessKeyId: req.webtaskContext.secrets.AWS_ACCESS_KEY_ID, secretAccessKey:req.webtaskContext.secrets.AWS_SECRET_ACCESS_KEY});
+  req.s3 = new AWS.S3();
+  next();
+});
+
+app.use((req, res, next) => {
+  if (req.webtaskContext.secrets.SHARED_TOKEN === req.query.token) {
+    next();
+  } else {
+    res.status(403).send({ message: "Forbidden" });
+  }
+});
+
 // GET
 app.get('/s3/sendToSlack', (req, res) => {
-  AWS.config.update({accessKeyId: req.webtaskContext.secrets.AWS_ACCESS_KEY_ID, secretAccessKey:req.webtaskContext.secrets.AWS_SECRET_ACCESS_KEY});
-  let s3 = new AWS.S3();
   const path = req.query.path || 'functional-tests/4979';
   const channel = '#' + (req.query.channel || 'test-automation-fo');
   console.log(`Path is: ${path}`);
@@ -29,7 +41,7 @@ app.get('/s3/sendToSlack', (req, res) => {
     Prefix: path
   };
   console.log(params);
-  s3.listObjects(params, function(err, data) {
+  req.s3.listObjects(params, function(err, data) {
     if (err) {
       console.log(err, err.stack); // an error occurred
       res.json({ error: err });
@@ -41,9 +53,9 @@ app.get('/s3/sendToSlack', (req, res) => {
         const fnameUrl = fname.replace('+', '%2b');
         attachments.push({
             "title": fname.replace(path + '/', ''),
-            "title_link": `https://webtask.it.auth0.com/api/run/${req.x_wt.container}/${req.x_wt.jtn}/s3/getFile?path=${fnameUrl}`,
+            "title_link": `https://webtask.it.auth0.com/api/run/${req.x_wt.container}/${req.x_wt.jtn}/s3/getFile?path=${fnameUrl}&token=${req.webtaskContext.secrets.SHARED_TOKEN}`,
             "mrkdwn_in": ["text"],
-            "color": "#e60b25",
+            "color": "#e60b25"
         });
       });
       let slackClient = new Slack(req.webtaskContext.secrets.SLACK_TOKEN);
@@ -54,7 +66,11 @@ app.get('/s3/sendToSlack', (req, res) => {
         slackClient.api('chat.postMessage', {
           text:message,
           channel: channel,
-          "attachments": 	JSON.stringify(attachments)
+          "attachments": 	JSON.stringify(attachments),
+          "username": "jenkins",
+          "as_user": false,
+          "icon_url": "https://avatars.slack-edge.com/2016-07-13/59505605175_0714a4f7449536ed0f10_72.png"
+
         }, function(err, response){
           console.log(response);
           res.json({ ok: 'OK!' });
@@ -69,8 +85,6 @@ app.get('/s3/sendToSlack', (req, res) => {
 
 app.get('/s3/getFile', (req, res) => {
   const path = req.query.path;
-  AWS.config.update({accessKeyId: req.webtaskContext.secrets.AWS_ACCESS_KEY_ID, secretAccessKey:req.webtaskContext.secrets.AWS_SECRET_ACCESS_KEY});
-  let s3 = new AWS.S3();
   
   console.log(path);
   const params = {
@@ -78,14 +92,12 @@ app.get('/s3/getFile', (req, res) => {
     Key: path
   };
 
-  let imgStream = s3.getObject(params).createReadStream();
+  let imgStream = req.s3.getObject(params).createReadStream();
   imgStream.pipe(res);
   
 });
 
 app.get('/s3/listFilesByPath', (req, res) => {
-  AWS.config.update({accessKeyId: req.webtaskContext.secrets.AWS_ACCESS_KEY_ID, secretAccessKey:req.webtaskContext.secrets.AWS_SECRET_ACCESS_KEY});
-  let s3 = new AWS.S3();
   const path = req.query.path || 'functional-tests/4979';
 
   const params = {
@@ -93,7 +105,7 @@ app.get('/s3/listFilesByPath', (req, res) => {
     Prefix: path
   };
 
-  s3.listObjects(params, function(err, data) {
+  req.s3.listObjects(params, function(err, data) {
     if (err) {
       console.log(err, err.stack); // an error occurred
       res.json({ error: err });
@@ -114,8 +126,6 @@ app.get('/s3/listFilesByPath', (req, res) => {
 //Yes yes I know is not the right way is a get to a delete :)
 
 app.get('/s3/deleteFileByKey', (req, res) => {
-  AWS.config.update({accessKeyId: req.webtaskContext.secrets.AWS_ACCESS_KEY_ID, secretAccessKey:req.webtaskContext.secrets.AWS_SECRET_ACCESS_KEY});
-  let s3 = new AWS.S3();
   const key = req.query.key;
 
   const params = {
@@ -123,7 +133,7 @@ app.get('/s3/deleteFileByKey', (req, res) => {
     Key: key
   };
 
-  s3.deleteObject(params, function(err, data) {
+  req.s3.deleteObject(params, function(err, data) {
     if (err) {
       console.log(err, err.stack); // an error occurred
       res.json({ error: err });
