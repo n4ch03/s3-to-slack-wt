@@ -28,6 +28,12 @@ paths:
           description: Channel to post results in slack
           required: true
           type: string
+        - name: token
+          in: query
+          description: Token to secure endpoint
+          required: true
+          type: string
+
       responses:
         '200':
           description: successful operation
@@ -40,6 +46,12 @@ paths:
           description: Key of file to search
           required: true
           type: string
+        - name: token
+          in: query
+          description: Token to secure endpoint
+          required: true
+          type: string
+
       responses:
         '200':
           description: successful operation
@@ -54,6 +66,12 @@ paths:
           description: Path to search files
           required: true
           type: string
+        - name: token
+          in: query
+          description: Token to secure endpoint
+          required: true
+          type: string
+
       responses:
         '200':
           description: successful operation
@@ -68,6 +86,12 @@ paths:
           description: Key of file to delete
           required: true
           type: string
+        - name: token
+          in: query
+          description: Token to secure endpoint
+          required: true
+          type: string
+
       responses:
         '200':
           description: successful operation
